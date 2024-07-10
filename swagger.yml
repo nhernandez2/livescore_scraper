@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Livescore Lemontech API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/livescore/searchTeams:
+    get:
+      summary: Search teams
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: Search query for teams
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    team_name:
+                      type: string
+                    country:
+                      type: string
+              example:
+                - id: 1
+                  team_name: "Argentina National Team"
+                  country: "Argentina"
+          
+  /api/livescore/searchLeague:
+    get:
+      summary: Search league
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: Search query for leagues
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    name_format:
+                      type: string
+                    location:
+                      type: string
+              example:
+                - id: 1
+                  name: "Primera Division"
+                  name_format: "primera-division"
+                  location: "argentina"
+  /api/subscription/subscriptionTeam:
+    post:
+      summary: Subscription
+      parameters:
+        - in: header
+          name: user_id
+          required: true
+          schema:
+            type: integer
+          description: Id de usuario para suscribirse 
+          
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+      responses:
+        '200':
+          description: Successful response
+    
+          
+  /api/team/getLastMatchByTeam:
+    get:
+      summary: Last matches by team
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID of the team
+      responses:
+        '200':
+          description: Successful response
+  /api/league/getTableFromLeague:
+    get:
+      summary: Get table by league
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID of the league
+      responses:
+        '200':
+          description: Successful response
