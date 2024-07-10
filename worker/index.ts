@@ -51,37 +51,38 @@ const liveMatches = async () => {
           const minutoVisita = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
 
           let message = '';
+          let matchString = `${match.home_team} vs ${match.away_team}`;
           if (minutoLocal > minutoVisita) {
             if ('goalHome' in lastLocalEvent) {
-              message = `Local, minuto ${lastLocalEvent.minute} gol de ${lastLocalEvent.goalHome}`
+              message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} gol de ${lastLocalEvent.goalHome}`
             }
             if ('doubleRedHome' in lastLocalEvent) {
-              message = `Local, minuto ${lastLocalEvent.minute} Doble tarjeta amarilla para ${lastLocalEvent.doubleRedHome}`
+              message = `${matchString}, minuto ${lastLocalEvent.minute} Doble tarjeta amarilla para ${lastLocalEvent.doubleRedHome}`
             }
             if ('redHome' in lastLocalEvent) {
-              message = `Local, minuto ${lastLocalEvent.minute} Tarjeta roja para ${lastLocalEvent.redHome}`
+              message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta roja para ${lastLocalEvent.redHome}`
             }
             if ('yellowHome' in lastLocalEvent) {
-              message = `Local, minuto ${lastLocalEvent.minute} Tarjeta amarilla para ${lastLocalEvent.yellowHome}`
+              message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta amarilla para ${lastLocalEvent.yellowHome}`
             }
             if ('ownGoalHome' in lastLocalEvent) {
-              message = `Local, minuto ${lastLocalEvent.minute} Auto-gol de ${lastLocalEvent.ownGoalHome}`
+              message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} Auto-gol de ${lastLocalEvent.ownGoalHome}`
             }
           } else {
             if ('goalVisit' in lastVisitEvent) {
-              message = `Visita, minuto ${lastVisitEvent.minute} gol de ${lastVisitEvent.goalVisit}`
+              message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} gol de ${lastVisitEvent.goalVisit}`
             }
             if ('doubleRedVisit' in lastVisitEvent) {
-              message = `Visita, minuto ${lastVisitEvent.minute} doble tarjeta amarilla para ${lastVisitEvent.doubleRedVisit}`
+              message = `${matchString}, minuto ${lastVisitEvent.minute} doble tarjeta amarilla para ${lastVisitEvent.doubleRedVisit}`
             }
             if ('redVisit' in lastVisitEvent) {
-              message = `Visita, minuto ${lastVisitEvent.minute} Tarjeta roja para ${lastVisitEvent.redVisit}`
+              message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta roja para ${lastVisitEvent.redVisit}`
             }
             if ('yellowVisit' in lastVisitEvent) {
-              message = `Visita, minuto ${lastVisitEvent.minute} Tarjeta amarilla para ${lastVisitEvent.yellowVisit}`
+              message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta amarilla para ${lastVisitEvent.yellowVisit}`
             }
             if ('ownGoalVisit' in lastVisitEvent) {
-              message = `Visita, minuto ${lastVisitEvent.minute} Auto-gol de ${lastVisitEvent.ownGoalVisit}`
+              message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} Auto-gol de ${lastVisitEvent.ownGoalVisit}`
             }
             await redisClient.publish('notify-livematch', JSON.stringify({ message: message, id_team: match.id_team }));
           }

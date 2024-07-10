@@ -46,6 +46,9 @@ Existe un archivo env.example con la lista de variables de entorno para ejecutar
 
 # Interactuar con el servicio
 
+** Por defecto estos endpoints son expuestos bajo la url http://localhost:3000 **
+
+## Notificaciones
 Para suscribirse a notificaciones de un equipo:
 
 1. Ejecutar endpoint `/api/livescore/searchTeams?query=` donde query es el nombre del equipo
@@ -64,12 +67,12 @@ user_id: 1
 
 3. Abrir en el navegador `http://localhost:3001` e ingresar la user_id anterior
 
-# Condiciones de notificación
+### Condiciones de notificación
 
 1. Se enviara una notificación 30 minutos antes de que comience el partido
 2. Se enviaran notificaciones por cada Gol, Tarjeta amarilla, Tarjeta Roja, Doble tarjeta amarilla y autogol del equipo local y visitante que transcurra durante la duración del partido.
 
-# Información offline
+## Información y estadisticas
 
 Para obtener información sobre partidos pasados y proximo partido ejecutar el endpoint `/api/team/getLastMatchByTeam?id=` id del equipo del que quieres tener la información.
 

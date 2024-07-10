@@ -137,7 +137,9 @@ export class DatabaseService {
             const urls = results.map((result: any) => ({
                 id: result.id,
                 url: result.url_next_match,
-                id_team: result.id_team
+                id_team: result.id_team,
+                home_team: result.home_team_name,
+                away_team: result.away_team_name
             }));
             return urls;
         } catch (error) {
