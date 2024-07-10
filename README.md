@@ -2,6 +2,11 @@
 
 Este proyecto trata de hacer scraping a la web https://www.livescore.com/en/ para obtener los ultimos partidos jugados por un equipo/seleccion. Ademas permite subscribirse a uno o más equipos y recibir notificaciones en tiempo real cuando los partidos esten en vivo.
 
+# Diagrama
+
+![diagrama](https://github.com/nhernandez2/livescore_scraper/assets/7493658/684869a0-70e7-4ed3-916e-06959bdb898a)
+
+
 # Dependencias
 
 - Git
@@ -46,7 +51,7 @@ Existe un archivo env.example con la lista de variables de entorno para ejecutar
 
 # Interactuar con el servicio
 
-** Por defecto estos endpoints son expuestos bajo la url http://localhost:3000 **
+**Por defecto estos endpoints son expuestos bajo la url http://localhost:3000**
 
 ## Notificaciones
 Para suscribirse a notificaciones de un equipo:
