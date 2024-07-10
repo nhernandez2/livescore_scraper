@@ -7,6 +7,50 @@ import { DatabaseService } from '../shared/services/databaseService';
 
 const databaseService = new DatabaseService();
 
+function getNotification(stats: any, match: any) {
+  const lastLocalEvent = stats.local[stats.local.length - 1];
+  const lastVisitEvent = stats.visit[stats.visit.length - 1];
+  const minutoLocal = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
+  const minutoVisita = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
+
+  let message = '';
+  let matchString = `${match.home_team} vs ${match.away_team}`;
+  if (minutoLocal > minutoVisita) {
+    if ('goalHome' in lastLocalEvent) {
+      message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} gol de ${lastLocalEvent.goalHome}`
+    }
+    if ('doubleRedHome' in lastLocalEvent) {
+      message = `${matchString}, minuto ${lastLocalEvent.minute} Doble tarjeta amarilla para ${lastLocalEvent.doubleRedHome}`
+    }
+    if ('redHome' in lastLocalEvent) {
+      message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta roja para ${lastLocalEvent.redHome}`
+    }
+    if ('yellowHome' in lastLocalEvent) {
+      message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta amarilla para ${lastLocalEvent.yellowHome}`
+    }
+    if ('ownGoalHome' in lastLocalEvent) {
+      message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} Auto-gol de ${lastLocalEvent.ownGoalHome}`
+    }
+  } else {
+    if ('goalVisit' in lastVisitEvent) {
+      message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} gol de ${lastVisitEvent.goalVisit}`
+    }
+    if ('doubleRedVisit' in lastVisitEvent) {
+      message = `${matchString}, minuto ${lastVisitEvent.minute} doble tarjeta amarilla para ${lastVisitEvent.doubleRedVisit}`
+    }
+    if ('redVisit' in lastVisitEvent) {
+      message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta roja para ${lastVisitEvent.redVisit}`
+    }
+    if ('yellowVisit' in lastVisitEvent) {
+      message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta amarilla para ${lastVisitEvent.yellowVisit}`
+    }
+    if ('ownGoalVisit' in lastVisitEvent) {
+      message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} Auto-gol de ${lastVisitEvent.ownGoalVisit}`
+    }
+  return message;
+}
+}
+
 const subscriptions = async () => {
   const subscriptions = await databaseService.getAllSubscription();
   try {
@@ -40,59 +84,20 @@ const liveMatches = async () => {
       const statsJson = JSON.stringify(stats);
       if (cachedValue) {
         const lastMatchesCache = JSON.parse(cachedValue);
-        lastMatchesCache['local'].pop()
         const cacheTest = JSON.stringify(lastMatchesCache);
 
         if (cacheTest != statsJson) {
-
-          const lastLocalEvent = stats.local[stats.local.length - 1];
-          const lastVisitEvent = stats.visit[stats.visit.length - 1];
-          const minutoLocal = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
-          const minutoVisita = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
-
-          let message = '';
-          let matchString = `${match.home_team} vs ${match.away_team}`;
-          if (minutoLocal > minutoVisita) {
-            if ('goalHome' in lastLocalEvent) {
-              message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} gol de ${lastLocalEvent.goalHome}`
-            }
-            if ('doubleRedHome' in lastLocalEvent) {
-              message = `${matchString}, minuto ${lastLocalEvent.minute} Doble tarjeta amarilla para ${lastLocalEvent.doubleRedHome}`
-            }
-            if ('redHome' in lastLocalEvent) {
-              message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta roja para ${lastLocalEvent.redHome}`
-            }
-            if ('yellowHome' in lastLocalEvent) {
-              message = `${matchString}, minuto ${lastLocalEvent.minute} Tarjeta amarilla para ${lastLocalEvent.yellowHome}`
-            }
-            if ('ownGoalHome' in lastLocalEvent) {
-              message = `${matchString}, -- ${lastLocalEvent.current_result} --, minuto ${lastLocalEvent.minute} Auto-gol de ${lastLocalEvent.ownGoalHome}`
-            }
-          } else {
-            if ('goalVisit' in lastVisitEvent) {
-              message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} gol de ${lastVisitEvent.goalVisit}`
-            }
-            if ('doubleRedVisit' in lastVisitEvent) {
-              message = `${matchString}, minuto ${lastVisitEvent.minute} doble tarjeta amarilla para ${lastVisitEvent.doubleRedVisit}`
-            }
-            if ('redVisit' in lastVisitEvent) {
-              message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta roja para ${lastVisitEvent.redVisit}`
-            }
-            if ('yellowVisit' in lastVisitEvent) {
-              message = `${matchString}, minuto ${lastVisitEvent.minute} Tarjeta amarilla para ${lastVisitEvent.yellowVisit}`
-            }
-            if ('ownGoalVisit' in lastVisitEvent) {
-              message = `${matchString}, -- ${lastVisitEvent.current_result} --, minuto ${lastVisitEvent.minute} Auto-gol de ${lastVisitEvent.ownGoalVisit}`
-            }
+            const message = getNotification(stats, match);
             await redisClient.publish('notify-livematch', JSON.stringify({ message: message, id_team: match.id_team }));
-          }
         } else {
           continue;
         }
+      } else {
+        const message = getNotification(stats, match);
+        await redisClient.publish('notify-livematch', JSON.stringify({ message: message, id_team: match.id_team }));
       }
-
       await redisClient.set(cacheKey, statsJson);
-    };
+    }
   } catch (error) {
     console.error('Error running liveMatches:', error);
   }

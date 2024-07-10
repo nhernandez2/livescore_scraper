@@ -35,9 +35,6 @@ CREATE TABLE NextMatchDetails (
     FOREIGN KEY (id_team) REFERENCES Team(id)
 );
 
-ALTER TABLE NextMatchDetails
-ADD COLUMN notified BOOLEAN DEFAULT FALSE;
-
 CREATE TABLE Subscription (
     id INT AUTO_INCREMENT PRIMARY KEY,
     team_id INT,
