@@ -1,6 +1,6 @@
 # README
 
-Este proyecto trata de hacer scraping a la web https://www.livescore.com/en/ para obtener los ultimos partidos jugados por un equipo/seleccion. Ademas permite subscribirse a uno o más equipos y recibir notificaciones en tiempo real cuando los partidos esten en vivo.
+Este proyecto hace scraping a la web https://www.livescore.com/en/ para obtener los ultimos partidos jugados por un equipo/seleccion. Ademas permite subscribirse a uno o más equipos y recibir notificaciones en tiempo real cuando los partidos esten en vivo.
 
 # Dependencias
 
