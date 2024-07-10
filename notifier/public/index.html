@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.IO Test</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var socket = io();
+
+            document.getElementById('joinChannel').addEventListener('click', function () {
+                var userId = document.getElementById('userId').value;
+                if (userId) {
+                    socket.emit('joinChannel', 'user/' + userId);
+
+                    socket.on("notify", function(message) {
+                        var messagesContainer = document.getElementById('messages');
+                        var messageElement = document.createElement('div');
+                        messageElement.textContent = message;
+                        messagesContainer.appendChild(messageElement);
+                    });
+
+                    socket.on("notify-next-matches", function(message) {
+                        var messagesContainer = document.getElementById('messages');
+                        var messageElement = document.createElement('div');
+                        var date = new Date(message.date_time);
+                        messageElement.textContent = "Próximo partido " + message.home_team_name + " vs " + message.away_team_name + " a las " + date.toLocaleString('es-CL', { timeZone: 'America/Santiago' });
+                        messagesContainer.appendChild(messageElement);
+                    });
+
+                    socket.on("notify-livematch", function(message) {
+                        var messagesContainer = document.getElementById('messages');
+                        var messageElement = document.createElement('div');
+                        messageElement.textContent = message;
+                        messagesContainer.appendChild(messageElement);
+                    });
+                }
+            });
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+    
+        #userId {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    
+        #joinChannel {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    
+        #joinChannel:hover {
+            background-color: #0056b3;
+        }
+    
+        #messages {
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    
+        #messages div {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+    
+        #messages div:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="userId" placeholder="ID de usuario">
+    <button id="joinChannel">Unirse al Canal</button>
+    <div id="messages"></div> <!-- Contenedor para los mensajes -->
+</body>
+</html>

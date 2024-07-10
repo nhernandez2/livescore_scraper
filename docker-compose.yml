@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=livescore_lemontech
+      - REDIS_URL=redis://redis:6379
+      - DOMAIN=https://www.livescore.com/en/
+      - BASE_API_LIVESCORE=https://search-api.livescore.com/api/v2/
+      - API_SEARCH=search/soccer
+      - IS_DOCKER=true
+    depends_on:
+      - db
+      - redis
+    shm_size: '1gb'
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=livescore_lemontech
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  notifier:
+    build:
+      context: .
+      dockerfile: Dockerfile-notifier
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=livescore_lemontech
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=livescore_lemontech
+      - REDIS_URL=redis://redis:6379
+      - CRON_SUBSCRIPTION=*/5 * * * *
+      # - CRON_SUBSCRIPTION=0 6 * * *
+      - CRON_NEXT_MATCH=*/2 * * * *
+      - CRON_LIVE_MATCH=*/1 * * * *
+      - DOMAIN=https://www.livescore.com/en/
+      - BASE_API_LIVESCORE=https://search-api.livescore.com/api/v2/
+      - API_SEARCH=search/soccer
+      - IS_DOCKER=true
+    depends_on:
+      - db
+      - redis
+    shm_size: '1gb'
+
+volumes:
+  mysql-data:
