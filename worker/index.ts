@@ -8,10 +8,29 @@ import { DatabaseService } from '../shared/services/databaseService';
 const databaseService = new DatabaseService();
 
 function getNotification(stats: any, match: any) {
-  const lastLocalEvent = stats.local[stats.local.length - 1];
-  const lastVisitEvent = stats.visit[stats.visit.length - 1];
-  const minutoLocal = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
-  const minutoVisita = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
+  let lastLocalEvent = stats.local[stats.local.length - 1];
+  let lastVisitEvent = stats.visit[stats.visit.length - 1];
+
+  if (!lastLocalEvent) {
+    lastLocalEvent= [];
+  }
+
+  if (!lastVisitEvent) {
+    lastVisitEvent= [];
+  }
+
+  let minutoLocal = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
+  let minutoVisita = parseInt(lastLocalEvent.minute.match(/\d+/g)[0]);
+
+
+
+  if (!minutoLocal) {
+    minutoLocal = 0;
+  }
+
+  if (!minutoVisita) {
+    minutoVisita = 0;
+  }
 
   let message = '';
   let matchString = `${match.home_team} vs ${match.away_team}`;
